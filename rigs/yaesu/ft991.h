@@ -65,6 +65,7 @@
 #define FT991_FUNCS (RIG_FUNC_TONE|RIG_FUNC_TSQL|RIG_FUNC_LOCK|\
                RIG_FUNC_MON|RIG_FUNC_NB|RIG_FUNC_NR|RIG_FUNC_VOX|\
                RIG_FUNC_FBKIN|RIG_FUNC_COMP|RIG_FUNC_ANF|RIG_FUNC_MN|\
+               RIG_FUNC_RIT|RIG_FUNC_XIT|\
                RIG_FUNC_TUNER)
 
 #define FT991_VFO_OPS (RIG_OP_TUNE|RIG_OP_CPY|RIG_OP_XCHG|\
@@ -121,7 +122,7 @@
 
 /* Delay sequential fast writes */
 
-#define FT991_POST_WRITE_DELAY               50
+#define FT991_POST_WRITE_DELAY               25
 
 typedef struct
 {
@@ -153,4 +154,12 @@ static int ft991_set_split_mode(RIG *rig, vfo_t vfo, rmode_t tx_mode,
 static int ft991_set_split_freq(RIG *rig, vfo_t vfo, freq_t tx_freq);
 static int ft991_get_split_freq(RIG *rig, vfo_t vfo, freq_t *tx_freq);
 static void debug_ft991info_data(const ft991info *rdata);
+static int ft991_set_ctcss_tone(RIG *rig, vfo_t vfo, tone_t tone);
+static int ft991_get_ctcss_tone(RIG *rig, vfo_t vfo, tone_t *tone);
+static int ft991_set_dcs_code(RIG *rig, vfo_t vfo, tone_t code);
+static int ft991_get_dcs_code(RIG *rig, vfo_t vfo, tone_t *code);
+static int ft991_set_ctcss_sql(RIG *rig, vfo_t vfo, tone_t tone);
+static int ft991_get_ctcss_sql(RIG *rig, vfo_t vfo, tone_t *tone);
+static int ft991_get_dcs_sql(RIG *rig, vfo_t vfo, tone_t *code);
+static int ft991_set_dcs_sql(RIG *rig, vfo_t vfo, tone_t code);
 #endif /* _FT991_H */

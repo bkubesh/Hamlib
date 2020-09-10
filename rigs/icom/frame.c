@@ -115,6 +115,7 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
     int frm_len, retval;
     int ctrl_id;
 
+    sendbuf[0] = buf[0] = 0;
     rs = &rig->state;
     priv = (struct icom_priv_data *)rs->priv;
     priv_caps = (struct icom_priv_caps *)rig->caps->priv;
@@ -127,16 +128,14 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
     /*
      * should check return code and that write wrote cmd_len chars!
      */
-    // cppcheck-suppress *
     Hold_Decode(rig);
 
-    serial_flush(&rs->rigport);
+    rig_flush(&rs->rigport);
 
     retval = write_block(&rs->rigport, (char *) sendbuf, frm_len);
 
     if (retval != RIG_OK)
     {
-        // cppcheck-suppress *
         Unhold_Decode(rig);
         return retval;
     }
@@ -148,7 +147,7 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
          * read what we just sent, because TX and RX are looped,
          * and discard it...
          * - if what we read is not what we sent, then it means
-         *          a collision on the CI-V bus occured!
+         *          a collision on the CI-V bus occurred!
          *      - if we get a timeout, then retry to send the frame,
          *          up to rs->retry times.
          */
@@ -157,8 +156,7 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
 
         if (retval == -RIG_ETIMEOUT || retval == 0)
         {
-            /* Nothing recieved, CI-V interface is not echoing */
-            // cppcheck-suppress *
+            /* Nothing received, CI-V interface is not echoing */
             Unhold_Decode(rig);
             return -RIG_BUSERROR;
         }
@@ -166,8 +164,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
         if (retval < 0)
         {
             /* Other error, return it */
-            // cppcheck-suppress *
-            Unhold_Decode(rig);
             return retval;
         }
 
@@ -180,7 +176,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
         {
         case COL:
             /* Collision */
-            // cppcheck-suppress *
             Unhold_Decode(rig);
             return -RIG_BUSBUSY;
 
@@ -191,7 +186,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
         default:
             /* Timeout after reading at least one character */
             /* Problem on ci-v bus? */
-            // cppcheck-suppress *
             Unhold_Decode(rig);
             return -RIG_BUSERROR;
         }
@@ -201,7 +195,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
             /* Not the same length??? */
             /* Problem on ci-v bus? */
             /* Someone else got a packet in? */
-            // cppcheck-suppress *
             Unhold_Decode(rig);
             return -RIG_EPROTO;
         }
@@ -211,7 +204,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
             /* Frames are different? */
             /* Problem on ci-v bus? */
             /* Someone else got a packet in? */
-            // cppcheck-suppress *
             Unhold_Decode(rig);
             return -RIG_EPROTO;
         }
@@ -222,16 +214,16 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
      */
     if (data_len == NULL)
     {
-        // cppcheck-suppress *
         Unhold_Decode(rig);
         return RIG_OK;
     }
 
     /*
      * wait for ACK ...
-     * FIXME: handle pading/collisions
+     * FIXME: handle padding/collisions
      * ACKFRMLEN is the smallest frame we can expect from the rig
      */
+    buf[0] = 0;
     frm_len = read_icom_frame(&rs->rigport, buf, sizeof(buf));
 
     if (memcmp(buf, sendbuf, frm_len) == 0 && priv->serial_USB_echo_off)
@@ -242,7 +234,6 @@ int icom_one_transaction(RIG *rig, int cmd, int subcmd,
         frm_len = read_icom_frame(&rs->rigport, buf, sizeof(buf));
     }
 
-    // cppcheck-suppress *
     Unhold_Decode(rig);
 
     if (frm_len < 0)

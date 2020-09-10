@@ -1,5 +1,5 @@
 /*
- *  Hamlib CI-V backend - description of IC-9100 (HF/VHF/UHF All-Mode Tranceiver)
+ *  Hamlib CI-V backend - description of IC-9100 (HF/VHF/UHF All-Mode Transceiver)
  *  Copyright (c) 2000-2011 by Stephane Fillod
  *
  *
@@ -251,8 +251,6 @@ const struct rig_caps ic9100_caps =
 
     .set_ptt =  icom_set_ptt,
     .get_ptt =  icom_get_ptt,
-
-    .set_rit =  icom_set_rit,
 
     .set_rptr_shift =  icom_set_rptr_shift,
     .get_rptr_shift =  icom_get_rptr_shift,

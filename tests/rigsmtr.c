@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
     {
         int c;
         int option_index = 0;
+        char dummy[2];
 
         c = getopt_long(argc, argv, SHORT_OPTIONS, long_options, &option_index);
 
@@ -154,7 +155,12 @@ int main(int argc, char *argv[])
                 exit(1);
             }
 
-            serial_rate = atoi(optarg);
+            if (sscanf(optarg, "%d%1s", &serial_rate, dummy) != 1)
+            {
+                fprintf(stderr, "Invalid baud rate of %s\n", optarg);
+                exit(1);
+            }
+
             break;
 
         case 'C':
@@ -284,7 +290,7 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr,
                 "rig backend for %s could not get S-Meter"
-                "or has unsufficient capability\nSorry\n",
+                "or has insufficient capability\nSorry\n",
                 rig->caps->model_name);
         exit(3);
     }

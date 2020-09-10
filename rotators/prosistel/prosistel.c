@@ -83,7 +83,7 @@ static int prosistel_transaction(ROT *rot, const char *cmdstr,
 
 transaction_write:
 
-    serial_flush(&rs->rotport);
+    rig_flush(&rs->rotport);
 
     if (cmdstr)
     {
@@ -261,7 +261,7 @@ const struct rot_caps prosistel_rot_caps =
     ROT_MODEL(ROT_MODEL_PROSISTEL),
     .model_name =     "Prosistel D",
     .mfg_name =       "Prosistel",
-    .version =        "0.5",
+    .version =        "20191219.0",
     .copyright =      "LGPL",
     .status =         RIG_STATUS_STABLE,
     .rot_type =       ROT_TYPE_AZIMUTH,

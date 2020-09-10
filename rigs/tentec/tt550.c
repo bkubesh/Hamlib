@@ -82,16 +82,14 @@ tt550_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
      * Hold_Decode keeps the asynchronous decode routine from being called
      * when we get data back from a normal command.
      */
-    // cppcheck-suppress *
     Hold_Decode(rig);
 
-    serial_flush(&rs->rigport);
+    rig_flush(&rs->rigport);
 
     retval = write_block(&rs->rigport, cmd, cmd_len);
 
     if (retval != RIG_OK)
     {
-        // cppcheck-suppress *
         Unhold_Decode(rig);
         return retval;
     }
@@ -101,7 +99,6 @@ tt550_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
      */
     if (!data || !data_len)
     {
-        // cppcheck-suppress *
         Unhold_Decode(rig);
         return 0;
     }
@@ -120,7 +117,6 @@ tt550_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
 
     *data_len = retval;
 
-    // cppcheck-suppress *
     Unhold_Decode(rig);
 
     return RIG_OK;
@@ -1417,7 +1413,7 @@ tt550_get_ptt(RIG *rig, vfo_t vfo, ptt_t *ptt)
     }
 
     /*
-     * buf should contain either Sxx for Receive Signal strenth
+     * buf should contain either Sxx for Receive Signal strength
      * or Txx for Transmit power/reflected power
      */
 

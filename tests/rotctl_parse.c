@@ -248,7 +248,7 @@ struct test_table *find_cmd_entry(int cmd)
 
 /* Structure for hash table provided by uthash.h
  *
- * Structure and hash funtions patterned after/copied from example.c
+ * Structure and hash functions patterned after/copied from example.c
  * distributed with the uthash package. See:  http://uthash.sourceforge.net/
  */
 struct mod_lst
@@ -298,7 +298,6 @@ int hash_model_id_sort(struct mod_lst *a, struct mod_lst *b)
 
 void hash_sort_by_model_id()
 {
-    // cppcheck-suppress *
     HASH_SORT(models, hash_model_id_sort);
 }
 
@@ -306,7 +305,7 @@ void hash_sort_by_model_id()
 /* Delete hash */
 void hash_delete_all()
 {
-    struct mod_lst *current_model, *tmp;
+    struct mod_lst *current_model, *tmp = NULL;
 
     HASH_ITER(hh, models, current_model, tmp)
     {
@@ -1018,14 +1017,14 @@ int rotctl_parse(ROT *my_rot, FILE *fin, FILE *fout, char *argv[], int argc,
             snprintf(cmd_name, sizeof(cmd_name), "%s", parsed_input[0] + 1);
 
             /* Sanity check as valid multiple character commands consist of
-             * alpha-numeric characters and the underscore ('_') character.
+             * alphanumeric characters and the underscore ('_') character.
              */
             for (j = 0; cmd_name[j] != '\0'; j++)
             {
                 if (!(isalnum((int)cmd_name[j]) || cmd_name[j] == '_'))
                 {
                     fprintf(stderr,
-                            "Valid multiple character command names contain alpha-numeric characters plus '_'\n");
+                            "Valid multiple character command names contain alphanumeric characters plus '_'\n");
                     return 0;
                 }
             }
@@ -1959,7 +1958,7 @@ declare_proto_rot(send_cmd)
 
     rs = &rot->state;
 
-    serial_flush(&rs->rotport);
+    rig_flush(&rs->rotport);
 
     retval = write_block(&rs->rotport, bufcmd, cmd_len);
 
@@ -2155,7 +2154,8 @@ declare_proto_rot(d_mm2dec)
     CHKSCN1ARG(sscanf(arg2, "%lf", &min));
     CHKSCN1ARG(sscanf(arg3, "%d", &sw));
 
-    dec_deg = dmmm2dec(deg, min, sw);
+    dec_deg = dmmm2dec(deg, min, sw,
+                       0.0); // we'll add real seconds when somebody asks for it
 
     if ((interactive && prompt) || (interactive && !prompt && ext_resp))
     {

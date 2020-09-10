@@ -37,13 +37,13 @@
 #include "bandplan.h"
 
 
-#define IC756_ALL_RX_MODES (RIG_MODE_AM|RIG_MODE_CW|RIG_MODE_SSB|RIG_MODE_RTTY|RIG_MODE_FM)
+#define IC756_ALL_RX_MODES (RIG_MODE_AM|RIG_MODE_CW|RIG_MODE_CWR|RIG_MODE_SSB|RIG_MODE_RTTY|RIG_MODE_RTTYR|RIG_MODE_FM)
 #define IC756_1HZ_TS_MODES IC756_ALL_RX_MODES
 
 /*
  * 100W in all modes but AM (40W)
  */
-#define IC756_OTHER_TX_MODES (RIG_MODE_CW|RIG_MODE_SSB|RIG_MODE_RTTY|RIG_MODE_FM)
+#define IC756_OTHER_TX_MODES (RIG_MODE_CW|RIG_MODE_CWR|RIG_MODE_SSB|RIG_MODE_RTTY|RIG_MODE_RTTYR|RIG_MODE_FM)
 #define IC756_AM_TX_MODES (RIG_MODE_AM)
 
 #define IC756PRO_FUNC_ALL (RIG_FUNC_NB|RIG_FUNC_COMP|RIG_FUNC_VOX|RIG_FUNC_TONE|RIG_FUNC_TSQL|RIG_FUNC_SBKIN|RIG_FUNC_FBKIN|RIG_FUNC_NR|RIG_FUNC_MON|RIG_FUNC_MN|RIG_FUNC_RF|RIG_FUNC_ANF)
@@ -149,7 +149,7 @@ const struct rig_caps ic756_caps =
     .mfg_name =  "Icom",
     .version =  BACKEND_VER ".0",
     .copyright =  "LGPL",
-    .status =  RIG_STATUS_ALPHA,
+    .status =  RIG_STATUS_STABLE,
     .rig_type =  RIG_TYPE_TRANSCEIVER,
     .ptt_type =  RIG_PTT_NONE,
     .dcd_type =  RIG_DCD_RIG,
@@ -226,9 +226,11 @@ const struct rig_caps ic756_caps =
     },
     /* mode/filter list, remember: order matters! */
     .filters =  {
-        {RIG_MODE_SSB | RIG_MODE_RTTY, kHz(2.4)},
+        {RIG_MODE_SSB | RIG_MODE_RTTY | RIG_MODE_RTTYR, kHz(2.4)},
         {RIG_MODE_CW, kHz(2.4)},
         {RIG_MODE_CW, Hz(500)},
+        {RIG_MODE_CWR, kHz(2.4)},
+        {RIG_MODE_CWR, Hz(500)},
         {RIG_MODE_AM, kHz(9)},
         {RIG_MODE_AM, kHz(2.4)},
         {RIG_MODE_FM, kHz(15)},
@@ -307,7 +309,7 @@ const struct rig_caps ic756pro_caps =
     .mfg_name =  "Icom",
     .version =  BACKEND_VER ".0",
     .copyright =  "LGPL",
-    .status =  RIG_STATUS_UNTESTED,
+    .status =  RIG_STATUS_STABLE,
     .rig_type =  RIG_TYPE_TRANSCEIVER,
     .ptt_type =  RIG_PTT_RIG,
     .dcd_type =  RIG_DCD_RIG,
@@ -386,8 +388,9 @@ const struct rig_caps ic756pro_caps =
     },
     /* mode/filter list, remember: order matters! */
     .filters =  {
-        {RIG_MODE_SSB | RIG_MODE_RTTY, kHz(2.4)},
+        {RIG_MODE_SSB | RIG_MODE_RTTY | RIG_MODE_RTTYR, kHz(2.4)},
         {RIG_MODE_CW, Hz(500)},
+        {RIG_MODE_CWR, Hz(500)},
         {RIG_MODE_AM, kHz(8)},
         {RIG_MODE_AM, kHz(2.4)},
         {RIG_MODE_FM, kHz(15)},
@@ -539,9 +542,9 @@ const struct rig_caps ic756pro2_caps =
     RIG_MODEL(RIG_MODEL_IC756PROII),
     .model_name = "IC-756PROII",
     .mfg_name =  "Icom",
-    .version =  BACKEND_VER ".0",
+    .version =  BACKEND_VER ".1",
     .copyright =  "LGPL",
-    .status =  RIG_STATUS_ALPHA,
+    .status =  RIG_STATUS_STABLE,
     .rig_type =  RIG_TYPE_TRANSCEIVER,
     .ptt_type =  RIG_PTT_RIG,
     .dcd_type =  RIG_DCD_RIG,
@@ -960,7 +963,7 @@ const struct rig_caps ic756pro3_caps =
     .mfg_name =  "Icom",
     .version =  BACKEND_VER ".0",
     .copyright =  "LGPL",
-    .status =  RIG_STATUS_BETA,
+    .status =  RIG_STATUS_STABLE,
     .rig_type =  RIG_TYPE_TRANSCEIVER,
     .ptt_type =  RIG_PTT_RIG,
     .dcd_type =  RIG_DCD_RIG,

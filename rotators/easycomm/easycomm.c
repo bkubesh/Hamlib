@@ -63,7 +63,7 @@ easycomm_transaction(ROT *rot, const char *cmdstr, char *data, size_t data_len)
     }
 
     rs = &rot->state;
-    serial_flush(&rs->rotport);
+    rig_flush(&rs->rotport);
     retval = write_block(&rs->rotport, cmdstr, strlen(cmdstr));
 
     if (retval != RIG_OK)
@@ -445,7 +445,7 @@ const struct rot_caps easycomm1_rot_caps =
     ROT_MODEL(ROT_MODEL_EASYCOMM1),
     .model_name =     "EasycommI",
     .mfg_name =       "Hamlib",
-    .version =        "0.4",
+    .version =        "20191206.0",
     .copyright =   "LGPL",
     .status =         RIG_STATUS_BETA,
     .rot_type =       ROT_TYPE_OTHER,
@@ -481,7 +481,7 @@ const struct rot_caps easycomm2_rot_caps =
     ROT_MODEL(ROT_MODEL_EASYCOMM2),
     .model_name =     "EasycommII",
     .mfg_name =       "Hamlib",
-    .version =        "0.4",
+    .version =        "20191206.0",
     .copyright =   "LGPL",
     .status =         RIG_STATUS_BETA,
     .rot_type =       ROT_TYPE_OTHER,
@@ -527,7 +527,7 @@ const struct rot_caps easycomm3_rot_caps =
     ROT_MODEL(ROT_MODEL_EASYCOMM3),
     .model_name =     "EasycommIII",
     .mfg_name =       "Hamlib",
-    .version =        "0.4",
+    .version =        "20191206.0",
     .copyright =   "LGPL",
     .status =         RIG_STATUS_ALPHA,
     .rot_type =       ROT_TYPE_OTHER,

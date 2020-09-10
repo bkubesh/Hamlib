@@ -162,8 +162,8 @@ int testmain()
  *            a large enough buffer for all possible replies for a command.
  *
  * returns:
- *   RIG_OK  -  if no error occured.
- *   RIG_EIO  -  if an I/O error occured while sending/receiving data.
+ *   RIG_OK  -  if no error occurred.
+ *   RIG_EIO  -  if an I/O error occurred while sending/receiving data.
  *   RIG_ETIMEOUT  -  if timeout expires without any characters received.
  */
 static int
@@ -179,7 +179,7 @@ rc2800_transaction(ROT *rot, const char *cmdstr,
 
 transaction_write:
 
-    serial_flush(&rs->rotport);
+    rig_flush(&rs->rotport);
 
     if (cmdstr)
     {
@@ -365,7 +365,7 @@ const struct rot_caps rc2800_rot_caps =
     ROT_MODEL(ROT_MODEL_RC2800),
     .model_name =     "RC2800",
     .mfg_name =       "M2",
-    .version =        "0.1.1",
+    .version =        "20200107.0",
     .copyright =      "LGPL",
     .status =         RIG_STATUS_BETA,
     .rot_type =       ROT_TYPE_AZEL,

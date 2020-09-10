@@ -75,9 +75,8 @@ static int jrc_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
 
     rs = &rig->state;
 
-    serial_flush(&rs->rigport);
+    rig_flush(&rs->rigport);
 
-    // cppcheck-suppress *
     Hold_Decode(rig);
 
     retval = write_block(&rs->rigport, cmd, cmd_len);
@@ -1358,7 +1357,7 @@ int jrc_set_mem(RIG *rig, vfo_t vfo, int ch)
 
     cmd_len = sprintf(cmdbuf, "C%03d" EOM, ch);
 
-    /* don't care about the Automatic reponse from receiver */
+    /* don't care about the Automatic response from receiver */
 
     return jrc_transaction(rig, cmdbuf, cmd_len, membuf, &mem_len);
 }

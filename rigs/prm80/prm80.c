@@ -78,7 +78,7 @@ static int prm80_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
 
     rs = &rig->state;
 
-    serial_flush(&rs->rigport);
+    rig_flush(&rs->rigport);
 
     retval = write_block(&rs->rigport, cmd, cmd_len);
 
@@ -441,13 +441,11 @@ int prm80_get_level(RIG *rig, vfo_t vfo, setting_t level, value_t *val)
     switch (level)
     {
     case RIG_LEVEL_AF:
-        // cppcheck-suppress *
         val->f = chan.levels[LVL_AF].f;
 
         break;
 
     case RIG_LEVEL_SQL:
-        // cppcheck-suppress *
         val->f = chan.levels[LVL_SQL].f;
 
         break;

@@ -31,7 +31,7 @@
 #include <sys/time.h>
 #endif
 
-#define BACKEND_VER "20200514"
+#define BACKEND_VER "20200906"
 
 /*
  * defines used by comp_cal_str in rig.c
@@ -179,9 +179,8 @@ struct icom_priv_data
     int split_on;                                   /* record split state */
     pltstate_t *pltstate;   /* only on optoscan */
     int serial_USB_echo_off; /* USB is not set to echo */
-    /* we track vfos internallhy for use with different functions like split */
+    /* we track vfos internally for use with different functions like split */
     /* this allows queries using CURR_VFO and Main/Sub to behave */
-    vfo_t curr_vfo; 
     vfo_t rx_vfo; 
     vfo_t tx_vfo; 
     freq_t curr_freq; // our current freq depending on which vfo is selected
@@ -191,7 +190,7 @@ struct icom_priv_data
     freq_t vfob_freq;  // track last setting of vfob -- used to return last freq when ptt is asserted
     int x25cmdfails;  // This will get set if the 0x25 command fails so we try just once
     int x1cx03cmdfails;  // This will get set if the 0x1c 0x03 command fails so we try just once
-    int satmode;      // Remember satmode for handling TX/RX VFOs and such
+    int poweron;  // to prevent powering on more than once
 };
 
 extern const struct ts_sc_list r8500_ts_sc_list[];
@@ -203,6 +202,7 @@ extern const struct ts_sc_list r9000_ts_sc_list[];
 extern const struct ts_sc_list r9500_ts_sc_list[];
 extern const struct ts_sc_list ic756_ts_sc_list[];
 extern const struct ts_sc_list ic756pro_ts_sc_list[];
+extern const struct ts_sc_list ic705_ts_sc_list[];
 extern const struct ts_sc_list ic706_ts_sc_list[];
 extern const struct ts_sc_list ic7000_ts_sc_list[];
 extern const struct ts_sc_list ic7100_ts_sc_list[];
@@ -223,7 +223,6 @@ int icom_rig_close(RIG *rig);
 int icom_cleanup(RIG *rig);
 int icom_set_freq(RIG *rig, vfo_t vfo, freq_t freq);
 int icom_get_freq(RIG *rig, vfo_t vfo, freq_t *freq);
-int icom_set_rit(RIG *rig, vfo_t vfo, shortfreq_t rit);
 int icom_get_rit_new(RIG *rig, vfo_t vfo, shortfreq_t *ts);
 int icom_set_rit_new(RIG *rig, vfo_t vfo, shortfreq_t ts);
 int icom_set_xit_new(RIG *rig, vfo_t vfo, shortfreq_t ts);
@@ -296,7 +295,7 @@ int icom_mW2power(RIG *rig, float *power, unsigned int mwpower, freq_t freq,
 int icom_send_morse(RIG *rig, vfo_t vfo, const char *msg);
 int icom_send_voice_mem(RIG *rig, vfo_t vfo, int bank);
 /* Exposed routines */
-int icom_get_split_vfos(const RIG *rig, vfo_t *rx_vfo, vfo_t *tx_vfo);
+int icom_get_split_vfos(RIG *rig, vfo_t *rx_vfo, vfo_t *tx_vfo);
 int icom_set_raw(RIG *rig, int cmd, int subcmd, int subcmdbuflen,
                  unsigned char *subcmdbuf, int val_bytes, int val);
 int icom_get_raw_buf(RIG *rig, int cmd, int subcmd, int subcmdbuflen,
@@ -324,6 +323,7 @@ extern const struct confparams icom_ext_parms[];
 extern const struct cmdparams icom_ext_cmds[];
 
 extern const struct rig_caps ic703_caps;
+extern const struct rig_caps ic705_caps;
 extern const struct rig_caps ic706_caps;
 extern const struct rig_caps ic706mkii_caps;
 extern const struct rig_caps ic706mkiig_caps;

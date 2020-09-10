@@ -130,7 +130,7 @@ static int tt565_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
     {
         int retval;
         rs = &rig->state;
-        serial_flush(&rs->rigport); /* discard pending i/p */
+        rig_flush(&rs->rigport); /* discard pending i/p */
         retval = write_block(&rs->rigport, cmd, cmd_len);
 
         if (retval != RIG_OK)
@@ -182,7 +182,7 @@ static int tt565_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
         }
         else                            // Yes, it was a 'read', phew!
         {
-            if (!strncmp(data + 1, cmd + 1, cmd_len - 2)) //reponse matches cmd?
+            if (!strncmp(data + 1, cmd + 1, cmd_len - 2)) //response matches cmd?
             {
                 return RIG_OK;  // all is well, normal exit
             }

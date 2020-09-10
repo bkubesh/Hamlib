@@ -128,6 +128,16 @@ static const struct confparams frontend_cfg_params[] =
         "Cache timeout, value of 0 disables caching",
         "500", RIG_CONF_NUMERIC, { .n = {0, 5000, 1}}
     },
+    {
+        TOK_AUTO_POWER_ON, "auto_power_on", "Auto power on",
+        "True enables compatible rigs to be powered up on open",
+        "0", RIG_CONF_CHECKBUTTON, { }
+    },
+    {
+        TOK_AUTO_DISABLE_SCREENSAVER, "auto_disable_screensaver", "Auto disable screen saver",
+        "True enables compatible rigs to have their screen saver disabled on open",
+        "0", RIG_CONF_CHECKBUTTON, { }
+    },
 
     { RIG_CONF_END, NULL, }
 };
@@ -549,7 +559,25 @@ static int frontend_set_conf(RIG *rig, token_t token, const char *val)
         break;
 
     case TOK_CACHE_TIMEOUT:
-        rig_set_cache_timeout_ms(rig, CACHE_ALL, atol(val));
+        rig_set_cache_timeout_ms(rig, HAMLIB_CACHE_ALL, atol(val));
+        break;
+
+    case TOK_AUTO_POWER_ON:
+        if (1 != sscanf(val, "%d", &val_i))
+        {
+            return -RIG_EINVAL; //value format error
+        }
+
+        rs->auto_power_on = val_i ? 1 : 0;
+        break;
+
+    case TOK_AUTO_DISABLE_SCREENSAVER:
+        if (1 != sscanf(val, "%d", &val_i))
+        {
+            return -RIG_EINVAL; //value format error
+        }
+
+        rs->auto_disable_screensaver = val_i ? 1 : 0;
         break;
 
     default:
@@ -861,7 +889,15 @@ static int frontend_get_conf(RIG *rig, token_t token, char *val)
         break;
 
     case TOK_CACHE_TIMEOUT:
-        sprintf(val, "%d", rig_get_cache_timeout_ms(rig, CACHE_ALL));
+        sprintf(val, "%d", rig_get_cache_timeout_ms(rig, HAMLIB_CACHE_ALL));
+        break;
+
+    case TOK_AUTO_POWER_ON:
+        sprintf(val, "%d", rs->auto_power_on);
+        break;
+
+    case TOK_AUTO_DISABLE_SCREENSAVER:
+        sprintf(val, "%d", rs->auto_disable_screensaver);
         break;
 
     default:
@@ -882,8 +918,8 @@ static int frontend_get_conf(RIG *rig, token_t token, char *val)
  * rig_token_foreach starts first with backend conf table, then finish
  * with frontend table.
  *
- * \return RIG_OK if the operation has been sucessful, otherwise
- * a negative value if an error occured (in which case, cause is
+ * \return RIG_OK if the operation has been successful, otherwise
+ * a negative value if an error occurred (in which case, cause is
  * set appropriately).
  */
 int HAMLIB_API rig_token_foreach(RIG *rig,
@@ -1021,8 +1057,8 @@ token_t HAMLIB_API rig_token_lookup(RIG *rig, const char *name)
  *
  *  Sets a configuration parameter.
  *
- * \return RIG_OK if the operation has been sucessful, otherwise
- * a negative value if an error occured (in which case, cause is
+ * \return RIG_OK if the operation has been successful, otherwise
+ * a negative value if an error occurred (in which case, cause is
  * set appropriately).
  *
  * \sa rig_get_conf()
@@ -1071,11 +1107,11 @@ int HAMLIB_API rig_set_conf(RIG *rig, token_t token, const char *val)
  * \param token The parameter
  * \param val   The location where to store the value of config \a token
  *
- *  Retrieves the value of a configuration paramter associated with \a token.
+ *  Retrieves the value of a configuration parameter associated with \a token.
  *  The location pointed to by val must be large enough to hold the value of the config.
  *
- * \return RIG_OK if the operation has been sucessful, otherwise
- * a negative value if an error occured (in which case, cause is
+ * \return RIG_OK if the operation has been successful, otherwise
+ * a negative value if an error occurred (in which case, cause is
  * set appropriately).
  *
  * \sa rig_set_conf()

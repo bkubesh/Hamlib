@@ -80,7 +80,7 @@ static int aor_transaction(RIG *rig, const char *cmd, int cmd_len, char *data,
 
     rs = &rig->state;
 
-    serial_flush(&rs->rigport);
+    rig_flush(&rs->rigport);
 
     retval = write_block(&rs->rigport, cmd, cmd_len);
 
@@ -439,7 +439,7 @@ int format8k_mode(RIG *rig, char *buf, rmode_t mode, pbwidth_t width)
 int aor_set_mode(RIG *rig, vfo_t vfo, rmode_t mode, pbwidth_t width)
 {
     struct aor_priv_caps *priv = (struct aor_priv_caps *)rig->caps->priv;
-    char mdbuf[8];
+    char mdbuf[9];
     char mdbuf2[16] = "";
     int mdbuf2_len, retval;
 
@@ -467,6 +467,7 @@ int aor_set_mode(RIG *rig, vfo_t vfo, rmode_t mode, pbwidth_t width)
         if (retval != RIG_OK) { return retval; }
 
         strncpy(mdbuf2, mdbuf + 4, 3); /* Extract first 'BW' part */
+        mdbuf2[3] = '\0'; // in case strnpy produces and un-terminated string
         mdbuf2_len = strlen(mdbuf2);
 
         retval = aor_transaction(rig, mdbuf2, mdbuf2_len, NULL, NULL);
@@ -1047,7 +1048,6 @@ int aor_set_channel(RIG *rig, const channel_t *chan)
 
     cmd_len += priv->format_mode(rig, aorcmd + cmd_len, chan->mode, chan->width);
 
-    // cppcheck-suppress *
     cmd_len += sprintf(aorcmd + cmd_len, " AT%d TM%12s%s",
                        chan->levels[LVL_ATT].i ? 1 : 0, chan->channel_desc, EOM);
 

@@ -71,6 +71,7 @@
 #endif
 
 #include <hamlib/rig.h>
+#include "hamlibdatetime.h"
 #include "misc.h"
 #include "iofunc.h"
 #include "serial.h"
@@ -264,6 +265,7 @@ int main(int argc, char *argv[])
     {
         int c;
         int option_index = 0;
+        char dummy[2];
 
         c = getopt_long(argc,
                         argv,
@@ -441,7 +443,12 @@ int main(int argc, char *argv[])
                 exit(1);
             }
 
-            serial_rate = atoi(optarg);
+            if (sscanf(optarg, "%d%1s", &serial_rate, dummy) != 1)
+            {
+                fprintf(stderr, "Invalid baud rate of %s\n", optarg);
+                exit(1);
+            }
+
             break;
 
         case 'C':
@@ -527,8 +534,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    rig_debug(RIG_DEBUG_ERR, "%s: #1 vfo_mode=%d\n", __func__, vfo_mode);
-
     if (!vfo_mode)
     {
         printf("Recommend using --vfo switch for rigctld if client supports it\n");
@@ -537,7 +542,8 @@ int main(int argc, char *argv[])
 
     rig_set_debug(verbose);
 
-    rig_debug(RIG_DEBUG_VERBOSE, "rigctld, %s\n", hamlib_version);
+    rig_debug(RIG_DEBUG_VERBOSE, "rigctld %s\nLast commit was %s\n", hamlib_version,
+              HAMLIBDATETIME);
     rig_debug(RIG_DEBUG_VERBOSE, "%s",
               "Report bugs to <hamlib-developer@lists.sourceforge.net>\n\n");
 
@@ -690,7 +696,15 @@ int main(int argc, char *argv[])
 
     retcode = getaddrinfo(src_addr, portno, &hints, &result);
 
-    if (retcode != 0)
+    if (retcode == 0 && result->ai_family == AF_INET6)
+    {
+        rig_debug(RIG_DEBUG_TRACE, "%s: Using IPV6\n", __func__);
+    }
+    else if (retcode == 0)
+    {
+        rig_debug(RIG_DEBUG_TRACE, "%s: Using IPV4\n", __func__);
+    }
+    else
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(retcode));
         exit(2);
@@ -1035,7 +1049,7 @@ void *handle_socket(void *arg)
 
         if (retcode == -1)
         {
-            sleep(1);
+            //sleep(1); // probably don't need this delay
             continue;
         }
 

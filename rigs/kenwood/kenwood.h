@@ -27,7 +27,7 @@
 #include <string.h>
 #include "token.h"
 
-#define BACKEND_VER "20200508"
+#define BACKEND_VER "20200901"
 
 #define EOM_KEN ';'
 #define EOM_TH '\r'
@@ -80,11 +80,12 @@ extern const struct confparams kenwood_cfg_params[];
 #define RIG_IS_HPSDR     (rig->caps->rig_model == RIG_MODEL_HPSDR)
 #define RIG_IS_K2        (rig->caps->rig_model == RIG_MODEL_K2)
 #define RIG_IS_K3        (rig->caps->rig_model == RIG_MODEL_K3)
+#define RIG_IS_THD7A     (rig->caps->rig_model == RIG_MODEL_THD7A)
 #define RIG_IS_THD74     (rig->caps->rig_model == RIG_MODEL_THD74)
 #define RIG_IS_TS2000    (rig->caps->rig_model == RIG_MODEL_TS2000)
 #define RIG_IS_TS50      (rig->caps->rig_model == RIG_MODEL_TS50)
 #define RIG_IS_TS450S    (rig->caps->rig_model == RIG_MODEL_TS450S)
-#define RIG_IS_TS450S    (rig->caps->rig_model == RIG_MODEL_TS450S)
+#define RIG_IS_TS480     (rig->caps->rig_model == RIG_MODEL_TS480)
 #define RIG_IS_TS590S    (rig->caps->rig_model == RIG_MODEL_TS590S)
 #define RIG_IS_TS590SG   (rig->caps->rig_model == RIG_MODEL_TS590SG)
 #define RIG_IS_TS690S    (rig->caps->rig_model == RIG_MODEL_TS690S)
@@ -115,17 +116,15 @@ struct kenwood_priv_data
     int k2_md_rtty;   /* K2 RTTY mode available flag, 1 = RTTY, 0 = N/A */
     char *fw_rev;   /* firmware revision level */
     int trn_state;  /* AI state discovered at startup */
-    unsigned fw_rev_uint; /* firmware revison as a number 1.07 -> 107 */
+    unsigned fw_rev_uint; /* firmware revision as a number 1.07 -> 107 */
     char verify_cmd[4];   /* command used to verify set commands */
     int is_emulation;     /* flag for TS-2000 emulations */
     void *data;           /* model specific data */
     rmode_t curr_mode;     /* used for is_emulation to avoid get_mode on VFOB */
-    // Boolean flags true when model is in use
-    int is_590s;
-    int is_590sg;
-    int is_950;
     struct timespec cache_start;
     char last_if_response[KENWOOD_MAX_BUF_LEN];
+    int poweron; /* to avoid powering on more than once */
+    int has_rit2; /* rig has set 2 rit command */
 };
 
 
@@ -226,6 +225,7 @@ extern const struct rig_caps k3_caps;
 extern const struct rig_caps k3s_caps;
 extern const struct rig_caps kx2_caps;
 extern const struct rig_caps kx3_caps;
+extern const struct rig_caps k4_caps;
 extern const struct rig_caps xg3_caps;
 extern const struct rig_caps trc80_caps;
 
@@ -253,6 +253,7 @@ extern const struct rig_caps thf6a_caps;
 extern const struct rig_caps transfox_caps;
 
 extern const struct rig_caps f6k_caps;
+extern const struct rig_caps powersdr_caps;
 extern const struct rig_caps pihpsdr_caps;
 extern const struct rig_caps ts890s_caps;
 extern const struct rig_caps pt8000a_caps;
